@@ -1,0 +1,596 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Jamshaid Ali | Python Backend &amp; AI Agents</title>
+<meta name="description" content="Jamshaid Ali, Senior Software Engineer in Lahore. Python backends with Django, FastAPI, PostgreSQL and AWS, and AI agents with MCP that ask before they act.">
+<link rel="canonical" href="https://jamshaid.info/">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://jamshaid.info/">
+<meta property="og:title" content="Jamshaid Ali | Python Backend &amp; AI Agents">
+<meta property="og:description" content="Projects, case studies and a live demo of an AI agent that asks before it acts.">
+<meta property="og:image" content="https://jamshaid.info/assets/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="627">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Jamshaid Ali | Python Backend &amp; AI Agents">
+<meta name="twitter:description" content="Projects, case studies and a live demo of an AI agent that asks before it acts.">
+<meta name="twitter:image" content="https://jamshaid.info/assets/og.png">
+<meta name="theme-color" content="#0B0F14">
+<link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&amp;family=Geist:wght@400;500;600;700;800&amp;family=Geist+Mono:wght@400;500&amp;display=swap" rel="stylesheet">
+<style>
+/* Layout idea: a dark control room. Big type on the left, a live agent console on the right, and every project read like a short case file. */
+:root {
+  --bg: #0B0F14;
+  --panel: #11171E;
+  --panel-2: #151C24;
+  --line: #1F2832;
+  --text: #E7ECF1;
+  --muted: #8E9BA8;
+  --accent: #4FD1C5;
+  --ok: #5FD39A;
+  --ok-bg: rgba(95, 211, 154, 0.12);
+  --wait: #F2B65A;
+  --wait-bg: rgba(242, 182, 90, 0.12);
+  --font-display: "Geist", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-serif: "Instrument Serif", Georgia, serif;
+  --font-mono: "Geist Mono", ui-monospace, Menlo, Consolas, monospace;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-display);
+  font-size: 17px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+a { color: var(--accent); text-underline-offset: 3px; }
+a:focus-visible, button:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 6px; }
+h1, h2, h3 { margin: 0; text-wrap: balance; letter-spacing: -0.02em; }
+p { margin: 0; }
+.wrap { max-width: 1180px; margin: 0 auto; padding: 0 24px; }
+.mono { font-family: var(--font-mono); }
+.serif { font-family: var(--font-serif); font-style: italic; font-weight: 400; letter-spacing: 0; }
+
+/* Background grid */
+.grid-bg {
+  position: absolute; inset: 0; pointer-events: none;
+  background-image: linear-gradient(var(--line) 1px, transparent 1px), linear-gradient(90deg, var(--line) 1px, transparent 1px);
+  background-size: 56px 56px;
+  mask-image: radial-gradient(ellipse at 70% 30%, rgba(0,0,0,0.55), transparent 70%);
+  -webkit-mask-image: radial-gradient(ellipse at 70% 30%, rgba(0,0,0,0.55), transparent 70%);
+}
+
+/* Header */
+header.top { position: sticky; top: 0; z-index: 20; background: rgba(11, 15, 20, 0.82); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border-bottom: 1px solid var(--line); }
+header.top .wrap { display: flex; align-items: center; justify-content: space-between; gap: 16px; min-height: 64px; flex-wrap: wrap; }
+.brand { display: flex; align-items: center; gap: 10px; color: var(--text); text-decoration: none; font-weight: 700; font-size: 17px; }
+.brand-mark { width: 30px; height: 30px; border-radius: 8px; background: var(--panel-2); border: 1px solid var(--line); display: grid; place-items: center; font-family: var(--font-mono); font-size: 12px; color: var(--accent); }
+nav { display: flex; gap: 22px; flex-wrap: wrap; align-items: center; }
+nav a { color: var(--muted); text-decoration: none; font-size: 15px; }
+nav a:hover { color: var(--text); }
+nav a.cv { color: var(--bg); background: var(--accent); padding: 7px 14px; border-radius: 8px; font-weight: 600; }
+nav a.cv:hover { color: var(--bg); filter: brightness(1.08); }
+
+/* Hero */
+.hero { position: relative; overflow: hidden; padding: 84px 0 64px; border-bottom: 1px solid var(--line); }
+.hero .wrap { position: relative; display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr); gap: 56px; align-items: center; }
+.status { display: inline-flex; align-items: center; gap: 10px; font-family: var(--font-mono); font-size: 13px; color: var(--muted); border: 1px solid var(--line); background: var(--panel); padding: 6px 12px; border-radius: 999px; }
+.pulse { width: 8px; height: 8px; border-radius: 50%; background: var(--ok); box-shadow: 0 0 0 0 rgba(95, 211, 154, 0.6); animation: pulse 2.4s infinite; }
+@keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(95,211,154,0.55); } 70% { box-shadow: 0 0 0 10px rgba(95,211,154,0); } 100% { box-shadow: 0 0 0 0 rgba(95,211,154,0); } }
+.hero h1 { font-size: clamp(42px, 6.2vw, 78px); line-height: 1.0; font-weight: 800; margin: 24px 0 22px; }
+.hero h1 .serif { color: var(--accent); font-size: 1.08em; }
+.lede { color: var(--muted); font-size: 19px; max-width: 33em; }
+.cta { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 30px; }
+.btn { display: inline-flex; align-items: center; gap: 8px; min-height: 46px; padding: 0 20px; border-radius: 10px; font-weight: 600; font-size: 15px; text-decoration: none; border: 1px solid var(--line); color: var(--text); background: var(--panel); transition: transform 0.15s ease, border-color 0.15s ease; }
+.btn:hover { transform: translateY(-1px); border-color: #34414E; }
+.btn.primary { background: var(--accent); border-color: var(--accent); color: var(--bg); }
+.btn svg { width: 17px; height: 17px; }
+
+/* Console */
+.console { background: var(--panel); border: 1px solid var(--line); border-radius: 16px; overflow: hidden; box-shadow: 0 40px 80px -40px rgba(0, 0, 0, 0.8), 0 0 0 1px rgba(79, 209, 197, 0.05); }
+.console-bar { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 12px 16px; border-bottom: 1px solid var(--line); font-family: var(--font-mono); font-size: 12px; color: var(--muted); flex-wrap: wrap; }
+.dots { display: flex; gap: 6px; }
+.dots i { width: 10px; height: 10px; border-radius: 50%; background: #26313C; display: block; }
+.console-body { padding: 18px; display: flex; flex-direction: column; gap: 12px; font-size: 14.5px; }
+.msg { padding: 11px 13px; border-radius: 10px; max-width: 94%; }
+.msg.user { align-self: flex-end; background: #1B2530; }
+.msg.agent { background: var(--panel-2); border: 1px solid var(--line); }
+.who { font-family: var(--font-mono); font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 4px; }
+.steps { list-style: none; margin: 6px 0 0; padding: 0; font-family: var(--font-mono); font-size: 12.5px; color: var(--muted); display: flex; flex-direction: column; gap: 3px; }
+.steps li::before { content: "✓ "; color: var(--ok); }
+.preview { width: 100%; border-collapse: collapse; font-size: 13.5px; margin-top: 10px; }
+.preview td { padding: 6px 6px; border-top: 1px solid var(--line); vertical-align: top; }
+.preview td:first-child { color: var(--muted); width: 26%; font-family: var(--font-mono); font-size: 12px; }
+.src { font-family: var(--font-mono); font-size: 11px; color: var(--accent); white-space: nowrap; }
+.flag { color: var(--wait); }
+.gate { display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; padding: 11px 13px; border-radius: 10px; background: var(--wait-bg); color: var(--wait); font-size: 13.5px; font-weight: 500; border: 1px solid rgba(242, 182, 90, 0.25); }
+.gate.done { background: var(--ok-bg); color: var(--ok); border-color: rgba(95, 211, 154, 0.25); }
+.gate.no { background: #1A2027; color: var(--muted); border-color: var(--line); }
+.gate-actions { display: flex; gap: 8px; }
+.gate button { font-family: var(--font-display); font-size: 13px; font-weight: 600; border-radius: 8px; padding: 0 14px; min-height: 36px; cursor: pointer; border: 1px solid currentColor; background: transparent; color: inherit; }
+.gate button.yes { background: var(--ok); color: var(--bg); border-color: var(--ok); }
+.tools { font-family: var(--font-mono); font-size: 11.5px; color: var(--muted); border-top: 1px dashed var(--line); padding-top: 10px; }
+
+/* Metrics */
+.metrics { border-bottom: 1px solid var(--line); }
+.metrics .wrap { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); }
+.metric { padding: 30px 22px 30px 0; }
+.metric + .metric { padding-left: 22px; border-left: 1px solid var(--line); }
+.metric b { display: block; font-size: 36px; font-weight: 700; line-height: 1.1; font-variant-numeric: tabular-nums; letter-spacing: -0.02em; }
+.metric b em { font-style: normal; color: var(--accent); }
+.metric span { color: var(--muted); font-size: 14px; }
+
+/* Sections */
+section.block { padding: 96px 0; border-bottom: 1px solid var(--line); }
+.sec-head { display: flex; justify-content: space-between; align-items: flex-end; gap: 24px; flex-wrap: wrap; margin-bottom: 40px; }
+.kicker { font-family: var(--font-mono); font-size: 13px; color: var(--accent); margin-bottom: 12px; }
+.sec-head h2 { font-size: clamp(34px, 4.6vw, 54px); font-weight: 800; line-height: 1.05; }
+.sec-head h2 .serif { color: var(--accent); }
+.sec-head p { color: var(--muted); max-width: 36em; margin-top: 12px; }
+
+/* Filters */
+.filters { display: flex; gap: 8px; flex-wrap: wrap; }
+.filters button { font-family: var(--font-display); font-size: 14px; font-weight: 500; color: var(--muted); background: var(--panel); border: 1px solid var(--line); border-radius: 999px; padding: 0 16px; min-height: 40px; cursor: pointer; }
+.filters button[aria-pressed="true"] { color: var(--bg); background: var(--text); border-color: var(--text); }
+
+/* Project cards */
+.cards { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px; }
+.card { background: var(--panel); border: 1px solid var(--line); border-radius: 16px; padding: 28px; display: flex; flex-direction: column; gap: 14px; transition: border-color 0.2s ease, transform 0.2s ease; }
+.card:hover { border-color: #33414F; transform: translateY(-2px); }
+.card[hidden] { display: none; }
+.card .meta { display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; font-family: var(--font-mono); font-size: 12px; color: var(--muted); }
+.card .meta .type { color: var(--accent); }
+.card h3 { font-size: 24px; font-weight: 700; line-height: 1.2; }
+.card .summary { color: var(--muted); font-size: 15.5px; }
+.card ul { margin: 2px 0 0; padding-left: 18px; display: flex; flex-direction: column; gap: 7px; font-size: 15px; }
+.card li::marker { color: var(--accent); }
+.result { font-size: 14.5px; color: var(--ok); background: var(--ok-bg); border-radius: 8px; padding: 9px 12px; }
+.tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: auto; padding-top: 6px; }
+.tag { font-family: var(--font-mono); font-size: 12px; padding: 4px 9px; border: 1px solid var(--line); border-radius: 6px; color: var(--muted); background: var(--bg); }
+.card.feature { grid-column: 1 / -1; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 32px; }
+.card.feature .col { display: flex; flex-direction: column; gap: 14px; }
+
+/* Principles */
+.principles { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 0; border: 1px solid var(--line); border-radius: 16px; overflow: hidden; }
+.principle { padding: 28px 24px; background: var(--panel); display: flex; flex-direction: column; gap: 10px; }
+.principle + .principle { border-left: 1px solid var(--line); }
+.principle .n { font-family: var(--font-mono); font-size: 13px; color: var(--accent); }
+.principle h3 { font-size: 20px; font-weight: 700; line-height: 1.25; }
+.principle p { color: var(--muted); font-size: 15px; }
+
+/* Notes */
+.notes { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 20px; }
+.note { background: var(--panel); border: 1px solid var(--line); border-radius: 16px; padding: 24px; display: flex; flex-direction: column; gap: 12px; text-decoration: none; color: var(--text); transition: border-color 0.2s ease; }
+.note:hover { border-color: #33414F; }
+.note .kind { font-family: var(--font-mono); font-size: 12px; color: var(--accent); }
+.note h3 { font-size: 20px; font-weight: 700; line-height: 1.25; }
+.note p { color: var(--muted); font-size: 15px; }
+.note .delta { margin-top: auto; padding-top: 12px; border-top: 1px dashed var(--line); font-family: var(--font-mono); font-size: 13px; }
+
+/* Experience */
+.timeline { display: flex; flex-direction: column; border-top: 1px solid var(--line); }
+.job { display: grid; grid-template-columns: 220px minmax(0, 1fr); gap: 32px; padding: 26px 0; border-bottom: 1px solid var(--line); }
+.job .when { font-family: var(--font-mono); font-size: 13.5px; color: var(--muted); padding-top: 4px; }
+.job h3 { font-size: 22px; font-weight: 700; }
+.job h3 span { color: var(--muted); font-weight: 400; }
+.job p { color: var(--muted); margin-top: 6px; max-width: 48em; font-size: 15.5px; }
+
+/* Earlier */
+.earlier { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 20px; margin-top: 28px; }
+.early { border: 1px solid var(--line); border-radius: 14px; padding: 20px; background: var(--panel); display: flex; flex-direction: column; gap: 6px; }
+.early h3 { font-size: 18px; font-weight: 700; }
+.early a { font-family: var(--font-mono); font-size: 13px; }
+.early p { color: var(--muted); font-size: 14.5px; }
+
+/* Skills */
+.skills { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 20px; }
+.skill { border: 1px solid var(--line); border-radius: 14px; padding: 22px; background: var(--panel); }
+.skill h3 { font-family: var(--font-mono); font-size: 12.5px; font-weight: 500; color: var(--accent); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 12px; }
+.chips { display: flex; flex-wrap: wrap; gap: 7px; }
+.chip { font-size: 14px; padding: 5px 11px; border-radius: 999px; background: var(--panel-2); border: 1px solid var(--line); }
+
+/* Contact */
+.contact { position: relative; overflow: hidden; padding: 110px 0 120px; }
+.contact h2 { font-size: clamp(40px, 6vw, 76px); font-weight: 800; line-height: 1.0; max-width: 13em; }
+.contact h2 .serif { color: var(--accent); }
+.contact-row { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 36px; align-items: center; }
+.email-box { display: inline-flex; align-items: center; gap: 4px; border: 1px solid var(--line); background: var(--panel); border-radius: 12px; padding: 6px 6px 6px 18px; font-family: var(--font-mono); font-size: 16px; }
+.email-box a { color: var(--text); text-decoration: none; }
+.copy { font-family: var(--font-display); font-size: 13px; font-weight: 600; border: 0; border-radius: 8px; background: var(--accent); color: var(--bg); padding: 0 14px; min-height: 38px; cursor: pointer; margin-left: 10px; }
+
+footer { border-top: 1px solid var(--line); padding: 28px 0; color: var(--muted); font-size: 13px; font-family: var(--font-mono); }
+footer .wrap { display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+
+@media (max-width: 960px) {
+  .hero .wrap, .card.feature { grid-template-columns: minmax(0, 1fr); }
+  .principles { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .principle + .principle { border-left: 0; }
+  .principle:nth-child(n+2) { border-top: 1px solid var(--line); }
+  .principle:nth-child(2n) { border-left: 1px solid var(--line); }
+  .principle:nth-child(2) { border-top: 0; }
+  .notes, .earlier, .skills { grid-template-columns: minmax(0, 1fr); }
+}
+@media (max-width: 720px) {
+  .cards { grid-template-columns: minmax(0, 1fr); }
+  .metrics .wrap { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .metric, .metric + .metric { padding: 22px 0; border-left: 0; }
+  .metric:nth-child(2n) { padding-left: 18px; border-left: 1px solid var(--line); }
+  .metric:nth-child(-n+2) { border-bottom: 1px solid var(--line); }
+  .principles { grid-template-columns: minmax(0, 1fr); }
+  .principle:nth-child(2n) { border-left: 0; }
+  .principle:nth-child(2) { border-top: 1px solid var(--line); }
+  .job { grid-template-columns: minmax(0, 1fr); gap: 6px; }
+  nav { gap: 14px; }
+  nav a:not(.cv) { display: none; }
+  section.block { padding: 72px 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+}
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="wrap">
+    <a class="brand" href="#top"><span class="brand-mark" aria-hidden="true">JA</span>Jamshaid Ali</a>
+    <nav aria-label="Sections">
+      <a href="#work">Work</a>
+      <a href="#principles">How I build</a>
+      <a href="#experience">Experience</a>
+      <a href="#contact">Contact</a>
+      <a class="cv" href="assets/Jamshaid_Ali_CV.pdf">Download CV</a>
+    </nav>
+  </div>
+</header>
+
+<main id="top">
+
+<section class="hero">
+  <div class="grid-bg" aria-hidden="true"></div>
+  <div class="wrap">
+    <div>
+      <span class="status"><span class="pulse" aria-hidden="true"></span>Senior Software Engineer · Lahore · Open to remote</span>
+      <h1>I build Python backends and AI agents that <span class="serif">ask before they act.</span></h1>
+      <p class="lede">6+ years shipping production systems with Django, FastAPI, PostgreSQL and AWS. Today I build MCP servers and AI agents that do real business work, with a person approving every change that matters.</p>
+      <div class="cta">
+        <a class="btn primary" href="#work">See my work</a>
+        <a class="btn" href="https://www.linkedin.com/in/jamshaidali-0449">
+          <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M20.45 20.45h-3.56v-5.57c0-1.33-.02-3.04-1.85-3.04-1.86 0-2.14 1.45-2.14 2.94v5.67H9.35V9h3.41v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.46v6.28zM5.34 7.43a2.06 2.06 0 1 1 0-4.13 2.06 2.06 0 0 1 0 4.13zM7.12 20.45H3.56V9h3.56v11.45zM22.22 0H1.77C.79 0 0 .77 0 1.73v20.54C0 23.23.79 24 1.77 24h20.45c.98 0 1.78-.77 1.78-1.73V1.73C24 .77 23.2 0 22.22 0z"/></svg>
+          LinkedIn</a>
+        <a class="btn" href="https://github.com/jamshaidali">
+          <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 .3a12 12 0 0 0-3.8 23.38c.6.12.83-.26.83-.57L9 21.07c-3.34.72-4.04-1.61-4.04-1.61-.55-1.39-1.34-1.76-1.34-1.76-1.08-.74.09-.73.09-.73 1.2.09 1.83 1.24 1.83 1.24 1.07 1.83 2.81 1.3 3.5 1 .1-.78.42-1.31.76-1.61-2.67-.3-5.47-1.33-5.47-5.93 0-1.31.47-2.38 1.24-3.22-.14-.3-.54-1.52.1-3.18 0 0 1-.32 3.3 1.23a11.5 11.5 0 0 1 6 0c2.28-1.55 3.29-1.23 3.29-1.23.64 1.66.24 2.88.12 3.18a4.65 4.65 0 0 1 1.23 3.22c0 4.61-2.8 5.63-5.48 5.92.42.36.81 1.1.81 2.22l-.01 3.29c0 .32.21.69.82.57A12 12 0 0 0 12 .3"/></svg>
+          GitHub</a>
+      </div>
+    </div>
+
+    <div class="console" aria-label="Example run of an approval-gated AI agent">
+      <div class="console-bar"><span class="dots" aria-hidden="true"><i></i><i></i><i></i></span><span>fundraising-agent · investor CRM</span><span>example run</span></div>
+      <div class="console-body">
+        <div class="msg user"><div class="who">Team member</div>Add Helio Climate Fund to the CRM. Deep search.</div>
+        <div class="msg agent">
+          <div class="who">Agent</div>
+          <ul class="steps">
+            <li>Searched the CRM by name and website: no duplicate</li>
+            <li>Web search: firm profile and focus</li>
+            <li>Coresignal: team data (1 search, 2 profiles)</li>
+          </ul>
+          <table class="preview">
+            <tr><td>Name</td><td>Helio Climate Fund <span class="src">· website</span></td></tr>
+            <tr><td>Stage</td><td>Triage</td></tr>
+            <tr><td>Focus</td><td>Seed–Series A, energy transition <span class="src">· web</span></td></tr>
+            <tr><td>Team</td><td>12 people, 3 partners <span class="src">· Coresignal</span></td></tr>
+            <tr><td>Ticket</td><td><span class="flag">DA VERIFICARE</span> <span class="src">· no source</span></td></tr>
+          </table>
+        </div>
+        <div class="gate" id="gate" role="status">
+          <span id="gate-text">Waiting for your approval. Nothing is saved yet.</span>
+          <div class="gate-actions" id="gate-actions">
+            <button type="button" class="yes" data-act="yes">Approve</button>
+            <button type="button" data-act="no">Decline</button>
+          </div>
+        </div>
+        <div class="tools">Tools used: web search + Coresignal (1 search, 2 profiles)</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="metrics">
+  <div class="wrap">
+    <div class="metric"><b>6<em>+</em> yrs</b><span>building production backends</span></div>
+    <div class="metric"><b>5 min <em>→</em> 30 s</b><span>data processing after query tuning</span></div>
+    <div class="metric"><b>8<em>+</em></b><span>Kubernetes clusters upgraded</span></div>
+    <div class="metric"><b><em>−</em>40%</b><span>operational cost from database consolidation</span></div>
+  </div>
+</div>
+
+<section class="block" id="work">
+  <div class="wrap">
+    <div class="sec-head">
+      <div>
+        <div class="kicker">01 / Selected work</div>
+        <h2>Things I've <span class="serif">shipped</span></h2>
+        <p>AI agents and MCP servers in production, plus the backend and infrastructure work behind them.</p>
+      </div>
+      <div class="filters" role="group" aria-label="Filter projects">
+        <button type="button" data-filter="all" aria-pressed="true">All</button>
+        <button type="button" data-filter="ai" aria-pressed="false">AI agents &amp; MCP</button>
+        <button type="button" data-filter="backend" aria-pressed="false">Backend &amp; infra</button>
+      </div>
+    </div>
+
+    <div class="cards">
+      <article class="card feature" data-cat="ai">
+        <div class="col">
+          <div class="meta"><span class="type">AI agent · ClickUp + MCP</span><span>OptimaGeeks · Oct 2026 – now</span></div>
+          <h3>AI fundraising agent on a live investor CRM</h3>
+          <p class="summary">An agent inside a climate-tech company's ClickUp workspace that finds investors, keeps a CRM of about 170 VCs current, writes investor briefs and drafts outreach emails. The demo at the top of this page is how it works.</p>
+          <p class="result">Live on the real CRM: new VCs arrive with sources, no duplicates, and every change approved by the team.</p>
+        </div>
+        <div class="col">
+          <ul>
+            <li>Wrote the agent's instructions: role, scope, hard rules (no deletes, no duplicates, no moving a stage backward) and hand-offs</li>
+            <li>Human-in-the-loop writes: a duplicate check, a preview with a source for every field, and a save only after a yes</li>
+            <li>Connected ClickUp, web search and the Coresignal MCP server, with paid lookups opt-in only and capped per investor</li>
+            <li>A "Tools used" line on every answer, so the team always knows where data came from</li>
+            <li>Shortlist and article-to-CRM flows, email-to-task intake, and English/Italian replies</li>
+          </ul>
+          <div class="tags"><span class="tag">AI agents</span><span class="tag">MCP</span><span class="tag">Coresignal</span><span class="tag">ClickUp</span><span class="tag">Human-in-the-loop</span></div>
+        </div>
+      </article>
+
+      <article class="card" data-cat="ai">
+        <div class="meta"><span class="type">Multi-agent · MCP · OAuth</span><span>OptimaGeeks · Jun 2026 – now</span></div>
+        <h3>AI marketing &amp; business operations platform</h3>
+        <p class="summary">Helps business owners automate marketing, content and daily operations through an AI assistant that can act, not just chat.</p>
+        <ul>
+          <li>Action-taking assistant with confirmation cards before it publishes or spends credits</li>
+          <li>MCP server with OAuth so Claude and other AI tools can connect to a business account safely</li>
+          <li>Business memory, voice notes with speech-to-text, and daily morning summaries</li>
+          <li>AI articles with SEO scoring and one-click CMS publishing, bulk email/SMS and subscription billing</li>
+          <li>Tenant isolation and prompt-injection defenses, shipped in containers with automated tests</li>
+        </ul>
+        <div class="tags"><span class="tag">MCP</span><span class="tag">OAuth</span><span class="tag">LLMs</span><span class="tag">Python</span><span class="tag">PostgreSQL</span><span class="tag">Docker</span></div>
+      </article>
+
+      <article class="card" data-cat="ai">
+        <div class="meta"><span class="type">Agentic commerce · GEO</span><span>OptimaGeeks · Sep – Nov 2026</span></div>
+        <h3>Agentic e-commerce platform &amp; AI discovery engine</h3>
+        <p class="summary">A pre-launch store where personal AI assistants (ChatGPT, Claude, Gemini) browse products and sign up for membership on behalf of their users.</p>
+        <ul>
+          <li>MCP server that lets AI assistants register users, check status and browse the real catalog</li>
+          <li>AI-readable site: llms.txt, Markdown page versions, JSON-LD structured data and IndexNow</li>
+          <li>API with PostgreSQL migrations, rate limiting, disposable-email blocking and a Mailgun outbox</li>
+          <li>Privacy-compliant deletion, staff CSV exports and end-to-end tests in GitHub Actions</li>
+        </ul>
+        <div class="tags"><span class="tag">MCP</span><span class="tag">GEO</span><span class="tag">PostgreSQL</span><span class="tag">Mailgun</span><span class="tag">GitHub Actions</span></div>
+      </article>
+
+      <article class="card" data-cat="ai">
+        <div class="meta"><span class="type">Private AI · RAG · Device mgmt</span><span>OptimaGeeks · 2026</span></div>
+        <h3>TripleX: private on-premise AI &amp; POS fleet backend</h3>
+        <p class="summary">Two systems for the TripleX A10 dual-screen POS: an AI assistant that runs fully on local hardware, and a cloud backend that manages merchant terminals.</p>
+        <ul>
+          <li>Zero-cloud AI that answers questions across 150+ legal contracts with exact source citations</li>
+          <li>MCP link from the chat (LibreChat) to an internal database (NocoDB), plus a Telegram digest agent</li>
+          <li>Android Management API backend: kiosk lockdown, remote lock, reboot, confirmed wipe and QR enrollment</li>
+          <li>Device status polling, command history, constant-time API key checks and automated tests</li>
+        </ul>
+        <div class="tags"><span class="tag">RAG</span><span class="tag">MCP</span><span class="tag">Local LLMs</span><span class="tag">Android Management API</span></div>
+      </article>
+
+      <article class="card" data-cat="backend">
+        <div class="meta"><span class="type">Full-stack platform</span><span>TechLeadz · Client: Mozilla</span></div>
+        <h3>Shepherd: campaign management for Mozilla Firefox Ad Ops</h3>
+        <p class="summary">An internal platform that replaced error-prone spreadsheet workflows with one system for campaigns, line items, advertisers and inventory.</p>
+        <ul>
+          <li>Owned the full lifecycle: architecture, development, testing, rollout and performance tuning</li>
+          <li>Django REST APIs and a React (Vite) frontend for every module</li>
+          <li>BigQuery analytics and Boostr CRM integration to automate ad-revenue reporting</li>
+          <li>Tuned views, queries and backend logic: processing dropped from 5 minutes to under 30 seconds</li>
+        </ul>
+        <p class="result">Adopted across Mozilla's Ad Ops organization, with data accuracy improved by 90%.</p>
+        <div class="tags"><span class="tag">Django</span><span class="tag">React</span><span class="tag">PostgreSQL</span><span class="tag">BigQuery</span></div>
+      </article>
+
+      <article class="card" data-cat="backend">
+        <div class="meta"><span class="type">Infrastructure · Databases</span><span>TechLeadz · Client: Apple</span></div>
+        <h3>Apple Hub Services: upgrades &amp; zero-downtime migrations</h3>
+        <p class="summary">Infrastructure and database work for Apple Hub Services' production systems on AWS and Kubernetes.</p>
+        <ul>
+          <li>Led Amazon Linux 2023 upgrades across 8+ Kubernetes clusters, improving benchmarks by 35% and achieving SOC 2 compliance</li>
+          <li>Upgraded RDS PostgreSQL from v12 to v17 with zero downtime using blue-green deployments</li>
+          <li>Consolidated 5 standalone databases into one RDS instance with AWS DMS, cutting operational costs by 40%</li>
+          <li>Patched container packages in Kubernetes pods to close high-risk vulnerabilities</li>
+        </ul>
+        <div class="tags"><span class="tag">AWS RDS</span><span class="tag">AWS DMS</span><span class="tag">Kubernetes</span><span class="tag">PostgreSQL</span></div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<section class="block" id="principles">
+  <div class="wrap">
+    <div class="sec-head">
+      <div>
+        <div class="kicker">02 / How I build agents</div>
+        <h2>The guardrails are <span class="serif">the product</span></h2>
+        <p>The model gets you to a demo. These rules, which run through every agent above, get you to production.</p>
+      </div>
+    </div>
+    <div class="principles">
+      <div class="principle"><span class="n">01</span><h3>Nothing is saved without a yes</h3><p>The agent shows a preview first and writes only after a person approves it. Approving a search never counts as approving a change.</p></div>
+      <div class="principle"><span class="n">02</span><h3>Every answer shows its sources</h3><p>Each field carries where it came from, and anything unclear is flagged for checking instead of guessed.</p></div>
+      <div class="principle"><span class="n">03</span><h3>Paid tools are opt-in</h3><p>Free sources by default. Paid APIs run only on request or approval, with caps, and every answer lists the tools it used.</p></div>
+      <div class="principle"><span class="n">04</span><h3>Least privilege, always</h3><p>Minimal connector access, OAuth, strict tenant isolation, and defenses against prompt injection.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="block" id="notes">
+  <div class="wrap">
+    <div class="sec-head">
+      <div>
+        <div class="kicker">03 / Notes from production</div>
+        <h2>Problems I've <span class="serif">debugged</span></h2>
+        <p>Short write-ups from real systems. Full posts are on LinkedIn.</p>
+      </div>
+    </div>
+    <div class="notes">
+      <a class="note" href="https://www.linkedin.com/in/jamshaidali-0449/recent-activity/all/">
+        <span class="kind">CDC · Kafka · Debezium</span>
+        <h3>Migrating a database without breaking the event stream</h3>
+        <p>Rebuilt the PostgreSQL → CDC → Kafka pipeline in an isolated environment, found a replication-slot misconfiguration, then migrated with AWS DMS and recreated the slots on the new database.</p>
+        <span class="delta">No data loss · no broken pipelines</span>
+      </a>
+      <a class="note" href="https://www.linkedin.com/in/jamshaidali-0449/recent-activity/all/">
+        <span class="kind">Gunicorn · Grafana · Django</span>
+        <h3>Why a sync endpoint kept killing workers</h3>
+        <p>Traced worker timeouts to a new auth token on every call and a materialized view refreshing over and over. Cached the token and refreshed the view once per sync.</p>
+        <span class="delta">Worker timeouts → none</span>
+      </a>
+      <a class="note" href="https://www.linkedin.com/in/jamshaidali-0449/recent-activity/all/">
+        <span class="kind">Python 3.14 · concurrency</span>
+        <h3>Subinterpreters vs processes for CPU-bound work</h3>
+        <p>Benchmarked InterpreterPoolExecutor against threads and processes: parallel speed like processes, with about half the startup cost.</p>
+        <span class="delta">50 tiny tasks: 0.271 s → 0.128 s</span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<section class="block" id="experience">
+  <div class="wrap">
+    <div class="sec-head">
+      <div>
+        <div class="kicker">04 / Experience</div>
+        <h2>Where I've <span class="serif">worked</span></h2>
+      </div>
+    </div>
+    <div class="timeline">
+      <div class="job">
+        <div class="when">Jun 2026 – Present</div>
+        <div><h3>Senior Software Engineer <span>· OptimaGeeks</span></h3><p>AI agents, MCP servers and Python backends for client products: AI marketing automation, agentic e-commerce, private on-premise AI and an AI fundraising agent.</p></div>
+      </div>
+      <div class="job">
+        <div class="when">Oct 2021 – May 2026</div>
+        <div><h3>Senior Software Engineer <span>· TechLeadz IT Solutions</span></h3><p>Built Shepherd for Mozilla Firefox Ad Ops and ran infrastructure and database upgrades for Apple Hub Services. RESTful APIs, PostgreSQL performance, AWS and Kubernetes, and code review for a team of 5+ developers.</p></div>
+      </div>
+      <div class="job">
+        <div class="when">2017 – 2021</div>
+        <div><h3>Web Developer <span>· earlier roles in Lahore</span></h3><p>PHP, Laravel, CodeIgniter and Vue.js applications, including a telehealth platform with Twilio video calls and an employee management system.</p></div>
+      </div>
+      <div class="job">
+        <div class="when">2014 – 2018</div>
+        <div><h3>BS (Hons.) Computer Science <span>· Government College University, Lahore</span></h3></div>
+      </div>
+    </div>
+
+    <div class="earlier">
+      <div class="early"><h3>Flying Languages</h3><a href="https://flyinglanguages.com">flyinglanguages.com</a><p>NLP-based language practice platform with AWS Polly and Transcribe for speech. Django, Vue.js, Celery, Redis.</p></div>
+      <div class="early"><h3>DJ &amp; event management</h3><a href="https://eventvibe.com">eventvibe.com</a><p>Email automation, Instagram tracking and event workflows, with AWS SNS/SQS for bulk messaging. Node.js, React, Docker.</p></div>
+      <div class="early"><h3>Doctors For Health</h3><a href="https://doctorsforhealth.co.uk">doctorsforhealth.co.uk</a><p>Telehealth appointment system with Twilio audio and video consultations. PHP CodeIgniter.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="block" id="skills">
+  <div class="wrap">
+    <div class="sec-head">
+      <div>
+        <div class="kicker">05 / Toolbox</div>
+        <h2>What I <span class="serif">work with</span></h2>
+      </div>
+    </div>
+    <div class="skills">
+      <div class="skill"><h3>AI &amp; LLMs</h3><div class="chips"><span class="chip">AI agents</span><span class="chip">MCP</span><span class="chip">RAG</span><span class="chip">Claude</span><span class="chip">Gemini</span><span class="chip">ChatGPT</span><span class="chip">Prompt engineering</span><span class="chip">Human-in-the-loop</span></div></div>
+      <div class="skill"><h3>Backend</h3><div class="chips"><span class="chip">Python</span><span class="chip">Django</span><span class="chip">Django REST Framework</span><span class="chip">FastAPI</span><span class="chip">Celery</span><span class="chip">Redis</span><span class="chip">Node.js</span></div></div>
+      <div class="skill"><h3>Data</h3><div class="chips"><span class="chip">PostgreSQL</span><span class="chip">MySQL</span><span class="chip">BigQuery</span><span class="chip">MongoDB</span><span class="chip">Debezium</span><span class="chip">Kafka</span></div></div>
+      <div class="skill"><h3>Cloud &amp; DevOps</h3><div class="chips"><span class="chip">AWS RDS</span><span class="chip">AWS DMS</span><span class="chip">EC2</span><span class="chip">SNS / SQS</span><span class="chip">Docker</span><span class="chip">Kubernetes</span><span class="chip">Argo CD</span><span class="chip">GitHub Actions</span><span class="chip">Terraform</span></div></div>
+      <div class="skill"><h3>Frontend</h3><div class="chips"><span class="chip">React</span><span class="chip">Vite</span><span class="chip">Next.js</span><span class="chip">TypeScript</span></div></div>
+      <div class="skill"><h3>Practice</h3><div class="chips"><span class="chip">Pytest</span><span class="chip">TDD</span><span class="chip">Code review</span><span class="chip">System design</span><span class="chip">Performance tuning</span><span class="chip">Agile / Scrum</span></div></div>
+    </div>
+  </div>
+</section>
+
+<section class="contact" id="contact">
+  <div class="grid-bg" aria-hidden="true"></div>
+  <div class="wrap" style="position: relative;">
+    <div class="kicker">06 / Contact</div>
+    <h2>Hiring for senior backend or AI engineering? <span class="serif">Let's talk.</span></h2>
+    <div class="contact-row">
+      <div class="email-box"><a href="mailto:jamshaidali937@gmail.com">jamshaidali937@gmail.com</a><button type="button" class="copy" id="copy-email">Copy</button></div>
+      <a class="btn" href="https://www.linkedin.com/in/jamshaidali-0449">LinkedIn</a>
+      <a class="btn" href="https://github.com/jamshaidali">GitHub</a>
+      <a class="btn" href="assets/Jamshaid_Ali_CV.pdf">Download CV</a>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  <div class="wrap"><span>Jamshaid Ali · Senior Software Engineer · Lahore, Pakistan</span><span>jamshaid.info</span></div>
+</footer>
+
+<script>
+(function () {
+  // Approval demo
+  var gate = document.getElementById('gate');
+  var text = document.getElementById('gate-text');
+  var actions = document.getElementById('gate-actions');
+  var PENDING = 'Waiting for your approval. Nothing is saved yet.';
+  function button(label, cls, fn) {
+    var b = document.createElement('button');
+    b.type = 'button'; b.textContent = label; if (cls) b.className = cls;
+    b.addEventListener('click', fn); return b;
+  }
+  function pending() {
+    gate.className = 'gate'; text.textContent = PENDING; actions.innerHTML = '';
+    actions.appendChild(button('Approve', 'yes', approve));
+    actions.appendChild(button('Decline', '', decline));
+  }
+  function approve() {
+    gate.className = 'gate done'; text.textContent = 'Approved. Record created in Triage with sources.';
+    actions.innerHTML = ''; actions.appendChild(button('Reset demo', '', pending));
+  }
+  function decline() {
+    gate.className = 'gate no'; text.textContent = 'Declined. Nothing was saved.';
+    actions.innerHTML = ''; actions.appendChild(button('Reset demo', '', pending));
+  }
+  pending();
+
+  // Project filters
+  var filterButtons = document.querySelectorAll('.filters button');
+  var cards = document.querySelectorAll('.card[data-cat]');
+  filterButtons.forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      var f = btn.getAttribute('data-filter');
+      filterButtons.forEach(function (b) { b.setAttribute('aria-pressed', String(b === btn)); });
+      cards.forEach(function (c) { c.hidden = !(f === 'all' || c.getAttribute('data-cat') === f); });
+    });
+  });
+
+  // Copy email
+  var copyBtn = document.getElementById('copy-email');
+  copyBtn.addEventListener('click', function () {
+    var email = 'jamshaidali937@gmail.com';
+    function done(ok) { copyBtn.textContent = ok ? 'Copied' : 'Copy failed'; setTimeout(function () { copyBtn.textContent = 'Copy'; }, 1800); }
+    try { navigator.clipboard.writeText(email).then(function () { done(true); }, function () { done(false); }); }
+    catch (e) { done(false); }
+  });
+})();
+</script>
+</body>
+</html>
