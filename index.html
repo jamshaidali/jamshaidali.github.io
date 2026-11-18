@@ -89,8 +89,9 @@ h1 .l:nth-child(2) span{animation-delay:.12s}h1 .l:nth-child(3) span{animation-d
 .orbit .ring{position:absolute;inset:6%;border-radius:50%;border:1px solid rgba(247,183,49,.35);animation:spin 38s linear infinite}
 .orbit .ring2{position:absolute;inset:18%;border-radius:50%;border:1px dashed rgba(79,209,197,.3);animation:spin 60s linear infinite reverse}
 @keyframes spin{to{transform:rotate(360deg)}}
-.orbit .core{position:absolute;inset:27%;border-radius:50%;display:grid;place-items:center;text-align:center;
+.orbit .core{overflow:hidden;position:absolute;inset:27%;border-radius:50%;display:grid;place-items:center;text-align:center;
   background:radial-gradient(circle at 35% 30%,#2a2411,#121213 70%);border:1px solid rgba(247,183,49,.45);box-shadow:0 0 60px rgba(247,183,49,.25),inset 0 0 40px rgba(247,183,49,.08)}
+.core img{width:100%;height:100%;object-fit:cover;object-position:50% 20%;border-radius:50%}
 .core b{font:700 clamp(40px,8vw,64px)/1 var(--hd);background:linear-gradient(135deg,var(--amber2),var(--amber) 55%,var(--teal));-webkit-background-clip:text;background-clip:text;color:transparent;display:block}
 .core span{display:block;font:500 10.5px var(--mono);letter-spacing:.18em;color:var(--teal);margin-top:6px}
 .sat{position:absolute;inset:0;animation:spin 38s linear infinite}
@@ -106,7 +107,7 @@ h1 .l:nth-child(2) span{animation-delay:.12s}h1 .l:nth-child(3) span{animation-d
 .stats{display:grid;grid-template-columns:repeat(4,1fr);border:1px solid var(--line);border-radius:20px;background:rgba(21,21,22,.8);backdrop-filter:blur(8px);margin-top:70px}
 .stat{padding:22px 24px;display:flex;gap:16px;align-items:center;border-right:1px solid var(--line)}
 .stat:last-child{border:0}
-.stat b{font:700 28px/1.1 var(--hd);color:var(--amber);display:block}
+.stat b{white-space:nowrap;font:700 26px/1.1 var(--hd);color:var(--amber);display:block}
 .stat small{font-size:13px;color:var(--muted)}
 
 /* about */
@@ -117,7 +118,8 @@ h1 .l:nth-child(2) span{animation-delay:.12s}h1 .l:nth-child(3) span{animation-d
 .b-val{grid-column:1/6;padding:28px}
 .b-stack{grid-column:6/13;padding:28px}
 .who{display:flex;gap:18px;align-items:center;padding-bottom:22px;border-bottom:1px solid var(--line);margin-bottom:22px}
-.av{width:68px;height:68px;border-radius:50%;display:grid;place-items:center;font:700 24px var(--hd);color:#1a1405;background:linear-gradient(135deg,var(--amber2),var(--amber));box-shadow:0 0 0 4px rgba(247,183,49,.2)}
+.av img{width:100%;height:100%;border-radius:50%;object-fit:cover;object-position:50% 20%}
+.av{overflow:hidden;width:68px;height:68px;border-radius:50%;display:grid;place-items:center;font:700 24px var(--hd);color:#1a1405;background:linear-gradient(135deg,var(--amber2),var(--amber));box-shadow:0 0 0 4px rgba(247,183,49,.2)}
 .who h3{font-size:24px}.who span{color:var(--muted);font-size:14.5px}
 .b-main p{font-size:17px;color:var(--body)}.b-main p b{color:var(--amber2);font-weight:600}
 .lbl{display:flex;align-items:center;gap:12px;font:500 11.5px var(--mono);letter-spacing:.2em;color:var(--muted);text-transform:uppercase;margin-bottom:20px}
@@ -413,7 +415,7 @@ footer .cp{font-size:13px;color:var(--muted)}
     <div class="dots" id="dots"></div>
     <div class="ring"></div><div class="ring2"></div>
     <div class="sat" id="sat"></div>
-    <div class="core"><div><b>JA</b><span>BACKEND · AGENTS</span></div></div>
+    <div class="core"><img src="assets/profile.jpg" alt="Jamshaid Ali" width="256" height="256"></div>
    </div>
   </div>
   <div class="stats rv">
@@ -430,7 +432,7 @@ footer .cp{font-size:13px;color:var(--muted)}
   <div class="eyebrow rv">About</div>
   <div class="bento">
    <div class="card b-main rv">
-    <div class="who"><div class="av">JA</div><div><h3>Jamshaid Ali</h3><span>Senior Software Engineer · Python backend &amp; AI agents</span></div></div>
+    <div class="who"><div class="av"><img src="assets/profile.jpg" alt="Jamshaid Ali" width="68" height="68"></div><div><h3>Jamshaid Ali</h3><span>Senior Software Engineer · Python backend &amp; AI agents</span></div></div>
     <p>I'm a <b>backend engineer who builds AI agents</b> the way production systems should be built: scoped, tested and observable. I work with <b>Python, Django, FastAPI, PostgreSQL and AWS</b>, and I now spend most of my time on <b>MCP servers and agents</b> that search, draft and update real business tools, always showing a preview and waiting for a yes before anything is saved.</p>
     <div style="margin-top:26px"><a class="btn btn-primary mag" href="mailto:jamshaidali937@gmail.com">Let's work together <svg><use href="#i-arr"/></svg></a></div>
    </div>
@@ -601,7 +603,7 @@ footer .cp{font-size:13px;color:var(--muted)}
 
 <footer>
  <div class="wrap">
-  <div class="nm"><div class="av" style="width:42px;height:42px;font-size:15px;box-shadow:none">JA</div><div><b>Jamshaid Ali</b><small>Senior Software Engineer · Python backends &amp; AI agents</small></div></div>
+  <div class="nm"><div class="av" style="width:42px;height:42px;box-shadow:none"><img src="assets/profile.jpg" alt="" width="42" height="42"></div><div><b>Jamshaid Ali</b><small>Senior Software Engineer · Python backends &amp; AI agents</small></div></div>
   <div class="fl"><a href="#home">Home</a><a href="#about">About</a><a href="#services">Services</a><a href="#work">Work</a><a href="#career">Career</a><a href="mailto:jamshaidali937@gmail.com">Contact</a></div>
   <div class="cp">© 2026 Jamshaid Ali · Lahore, Pakistan · jamshaid.info</div>
  </div>
