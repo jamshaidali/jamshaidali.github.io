@@ -191,13 +191,17 @@ h1 .l:nth-child(2) span{animation-delay:.12s}h1 .l:nth-child(3) span{animation-d
 .vp.drag{cursor:grabbing}
 .track{display:flex;transition:transform .6s cubic-bezier(.2,.8,.2,1)}
 .track.nodrag{transition:none}
-.slide{min-width:100%;display:grid;grid-template-columns:1fr 1fr;border:1px solid var(--line);border-radius:22px;background:var(--card);overflow:hidden;user-select:none}
+.plist{display:grid;gap:28px;margin-top:44px}
+.slide{display:grid;grid-template-columns:1fr 1fr;border:1px solid var(--line);border-radius:22px;background:var(--card);overflow:hidden;user-select:none}
 .vis{position:relative;min-height:380px;padding:28px;background:radial-gradient(circle at 30% 20%,rgba(247,183,49,.16),transparent 55%),#0F0F10;border-right:1px solid var(--line);display:flex;flex-direction:column;justify-content:center}
 .vis .tag{position:absolute;left:20px;top:20px;padding:7px 16px;border-radius:99px;background:var(--amber);color:#1a1405;font:600 12.5px var(--tx)}
 .mock{border:1px solid var(--line);border-radius:14px;background:#0B0B0C;padding:16px 18px;font:12.5px/1.9 var(--mono);color:var(--muted);box-shadow:0 20px 50px rgba(0,0,0,.5)}
 .mock div{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .mock b{color:var(--teal);font-weight:500}.mock u{color:var(--amber);text-decoration:none}.mock s{color:var(--ok);text-decoration:none}
 .sl-body{padding:32px 34px}
+.slide.flip .vis{order:2;border-right:0;border-left:1px solid var(--line)}
+.bl{margin:14px 0 0;padding-left:18px;font-size:14.5px;display:grid;gap:8px}.bl li::marker{color:var(--amber)}
+.slide:hover{border-color:rgba(247,183,49,.35)}
 .sl-body .pills{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px}
 .sl-body h3{font-size:26px;line-height:1.2;margin-bottom:12px}
 .sl-body p{font-size:15px}
@@ -328,7 +332,7 @@ footer .cp{font-size:13px;color:var(--muted)}
   .b-main,.b-edu,.b-conn,.b-val,.b-stack{grid-column:1/-1;grid-row:auto}
   .svc,.notes{grid-template-columns:1fr 1fr}
   .proc{grid-template-columns:repeat(3,1fr)}.step::after{display:none!important}
-  .slide{grid-template-columns:1fr}.vis{min-height:300px;border-right:0;border-bottom:1px solid var(--line)}
+  .slide{grid-template-columns:1fr}.vis{min-height:260px;border-right:0!important;border-left:0!important;border-bottom:1px solid var(--line)}.slide.flip .vis{order:0}
   .stk,.earlier{grid-template-columns:1fr}.stk .card.w{grid-column:auto}
   .rail{display:none}
 }
@@ -526,12 +530,7 @@ footer .cp{font-size:13px;color:var(--muted)}
  <div class="wrap">
   <div class="eyebrow rv">Work</div>
   <h2 class="rv">Featured <em>projects</em></h2>
-  <div class="ctrl rv"><span>↔ Swipe or drag to explore</span>
-   <div class="r"><span><b id="cur">01</b> / <span id="tot">07</span></span>
-    <button class="arrow" id="prev" aria-label="Previous project"><svg><use href="#i-l"/></svg></button>
-    <button class="arrow" id="next" aria-label="Next project"><svg><use href="#i-r"/></svg></button></div></div>
-  <div class="vp rv" id="vp"><div class="track" id="track"></div></div>
-  <div class="pg" id="pg"></div>
+  <div class="plist" id="plist"></div>
  </div>
 </section>
 
@@ -693,27 +692,15 @@ const P=[
   m:[['8+','clusters upgraded'],['−40%','operational cost']],c:['AWS RDS','AWS DMS','Kubernetes','PostgreSQL'],
   v:['<b>›</b> blue-green: pg12 → pg17','<s>✓</s> replication in sync','<s>✓</s> switchover · 0 s downtime','<b>›</b> DMS: 5 DBs → 1 RDS','<s>✓</s> cost −40%']}
 ];
-const track=$('#track'),pg=$('#pg');
+const list=$('#plist');
 P.forEach((p,i)=>{
- const s=document.createElement('article');s.className='slide';
+ const s=document.createElement('article');s.className='slide rv'+(i%2?' flip':'');
  s.innerHTML='<div class="vis"><span class="tag">'+p.tag+'</span><div class="mock">'+p.v.map(l=>'<div>'+l+'</div>').join('')+'</div></div>'+
  '<div class="sl-body"><div class="pills">'+p.pills.map(x=>'<span class="chip am">'+x+'</span>').join('')+'</div><h3>'+p.t+'</h3><p>'+p.d+'</p>'+
- '<button class="more" aria-expanded="false">Read more</button><div class="det"><div><ul>'+p.b.map(x=>'<li>'+x+'</li>').join('')+'</ul></div></div>'+
+ '<ul class="bl">'+p.b.map(x=>'<li>'+x+'</li>').join('')+'</ul>'+
  '<div class="mets">'+p.m.map(m=>'<div><b>'+m[0]+'</b><small>'+m[1]+'</small></div>').join('')+'</div>'+
  '<div class="pills">'+p.c.map(x=>'<span class="chip">'+x+'</span>').join('')+'</div></div>';
- track.appendChild(s);
- const d=document.createElement('button');d.setAttribute('aria-label','Project '+(i+1));d.onclick=()=>go(i);pg.appendChild(d)});
-$$('.more').forEach(b=>b.onclick=()=>{const det=b.nextElementSibling,o=det.classList.toggle('open');b.setAttribute('aria-expanded',o);b.textContent=o?'Show less':'Read more'});
-let cur=0;const vp=$('#vp'),prev=$('#prev'),next=$('#next'),n=P.length;$('#tot').textContent=String(n).padStart(2,'0');
-function go(i){cur=Math.max(0,Math.min(n-1,i));track.classList.remove('nodrag');track.style.transform='translateX(-'+cur*100+'%)';
- $('#cur').textContent=String(cur+1).padStart(2,'0');prev.disabled=cur===0;next.disabled=cur===n-1;$$('#pg button').forEach((b,j)=>b.classList.toggle('on',j===cur))}
-prev.onclick=()=>go(cur-1);next.onclick=()=>go(cur+1);go(0);
-let sx=0,dx=0,drag=false;
-vp.addEventListener('pointerdown',e=>{if(e.target.closest('button,a'))return;drag=true;sx=e.clientX;dx=0;vp.classList.add('drag');track.classList.add('nodrag')});
-addEventListener('pointermove',e=>{if(!drag)return;dx=e.clientX-sx;track.style.transform='translateX(calc(-'+cur*100+'% + '+dx+'px))'});
-addEventListener('pointerup',()=>{if(!drag)return;drag=false;vp.classList.remove('drag');go(Math.abs(dx)>70?cur+(dx<0?1:-1):cur)});
-vp.tabIndex=0;vp.addEventListener('keydown',e=>{if(e.key==='ArrowRight')go(cur+1);if(e.key==='ArrowLeft')go(cur-1)});
-
+ list.appendChild(s);io.observe(s)});
 })();
 </script>
 </body>
