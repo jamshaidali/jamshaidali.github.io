@@ -347,6 +347,31 @@ footer .cp{font-size:13px;color:var(--muted)}
   .sl-body{padding:24px}
 }
 
+
+/* outcomes + band */
+.outc{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:18px;margin-top:64px}
+.oc{padding:26px 24px 22px;display:flex;flex-direction:column;gap:6px;overflow:hidden}
+.oc::before{content:"";position:absolute;inset:0;background:radial-gradient(circle at 20% 0%,rgba(247,183,49,.16),transparent 60%);opacity:.7;transition:opacity .3s;pointer-events:none}
+.oc:hover{transform:translateY(-6px);border-color:rgba(247,183,49,.55);box-shadow:0 24px 60px rgba(0,0,0,.5),0 0 40px rgba(247,183,49,.12)}
+.oc:hover::before{opacity:1}
+.oc .num{position:relative;font:700 clamp(34px,3.6vw,48px)/1.05 var(--hd);color:var(--amber);letter-spacing:-.03em;white-space:nowrap;text-shadow:0 0 30px rgba(247,183,49,.3)}
+.oc .num small{font:600 .42em var(--hd);color:var(--amber2);letter-spacing:0}
+.oc .num i{font-style:normal;color:var(--teal);margin:0 .08em}
+.oc h3{position:relative;font-size:17px;margin-top:8px}
+.oc p{position:relative;font-size:14px;color:var(--muted);line-height:1.5}
+.oc em{position:relative;margin-top:auto;padding-top:14px;font:500 11.5px var(--mono);font-style:normal;color:var(--teal);letter-spacing:.02em}
+.band{display:flex;align-items:center;gap:22px;margin-top:22px;padding:14px 22px;border:1px solid var(--line);border-radius:16px;background:rgba(21,21,22,.7)}
+.bandl{flex:none;display:flex;align-items:baseline;gap:8px;font:500 13px var(--mono);color:var(--muted);white-space:nowrap}
+#home .wrap{width:100%;min-width:0}
+.bandl b{color:var(--amber);font-size:15px}
+.mq{overflow:hidden;flex:1;min-width:0;mask-image:linear-gradient(90deg,transparent,#000 8%,#000 92%,transparent)}
+.mt{display:flex;gap:44px;width:max-content;animation:mq 32s linear infinite}
+.band:hover .mt{animation-play-state:paused}
+.mt span{font:600 15px var(--hd);color:var(--body);white-space:nowrap;display:flex;align-items:center;gap:44px}
+.mt span::after{content:"";width:6px;height:6px;border-radius:50%;background:var(--amber);opacity:.7}
+@keyframes mq{to{transform:translateX(calc(-50% - 22px))}}
+@media(max-width:980px){.outc{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:620px){.outc{grid-template-columns:minmax(0,1fr);margin-top:44px}.band{flex-direction:column;align-items:flex-start;gap:10px;padding:14px 16px}.mq{width:100%}}
 /* responsive hardening */
 .wrap>*,.hero>*,.demo>*,.contact>*,.bento>*,.svc>*,.notes>*,.stk>*,.plist>*,.earlier>*,.proc>*{min-width:0}
 img,svg{max-width:100%}
@@ -472,11 +497,17 @@ img,svg{max-width:100%}
     <div class="core"><img src="assets/profile.jpg" alt="Jamshaid Ali" width="256" height="256"></div>
    </div>
   </div>
-  <div class="stats rv">
-   <div class="stat"><div class="ico"><svg><use href="#i-term"/></svg></div><div><b><span data-count="6">0</span>+</b><small>years in production</small></div></div>
-   <div class="stat"><div class="ico"><svg><use href="#i-act"/></svg></div><div><b>5 min → 30 s</b><small>after query tuning</small></div></div>
-   <div class="stat"><div class="ico"><svg><use href="#i-cloud"/></svg></div><div><b><span data-count="8">0</span>+</b><small>Kubernetes clusters upgraded</small></div></div>
-   <div class="stat"><div class="ico"><svg><use href="#i-db"/></svg></div><div><b>−<span data-count="40">0</span>%</b><small>cost from DB consolidation</small></div></div>
+  <div class="outc">
+   <a class="oc card rv" href="#work"><div class="num"><span data-count="5">0</span><small> min</small> <i>→</i> <span data-count="30">0</span><small> s</small></div><h3>Report processing time</h3><p>Query and view tuning on an internal ad-ops platform</p><em>Shepherd · Mozilla Firefox Ad Ops</em></a>
+   <a class="oc card rv" style="--d:.08s" href="#work"><div class="num">−<span data-count="40">0</span><small>%</small></div><h3>Operational cost</h3><p>Five standalone databases consolidated into one RDS instance</p><em>Apple Hub Services</em></a>
+   <a class="oc card rv" style="--d:.16s" href="#work"><div class="num"><span data-count="8">0</span><small>+</small></div><h3>Kubernetes clusters upgraded</h3><p>Amazon Linux 2023 upgrades with SOC 2 compliance achieved</p><em>Apple Hub Services</em></a>
+   <a class="oc card rv" style="--d:.24s" href="#work"><div class="num"><span data-count="0">0</span></div><h3>Writes without approval</h3><p>An AI agent on a live investor CRM that always asks first</p><em>AI fundraising agent · OptimaGeeks</em></a>
+  </div>
+  <div class="band rv"><span class="bandl"><b>6+</b> years shipping for</span>
+   <div class="mq"><div class="mt" aria-hidden="true">
+    <span>Mozilla Firefox Ad Ops</span><span>Apple Hub Services</span><span>TripleX</span><span>OptimaGeeks</span><span>TechLeadz IT Solutions</span><span>LeaderNova</span>
+    <span>Mozilla Firefox Ad Ops</span><span>Apple Hub Services</span><span>TripleX</span><span>OptimaGeeks</span><span>TechLeadz IT Solutions</span><span>LeaderNova</span>
+   </div></div></div>
   </div>
  </div>
 </section>
